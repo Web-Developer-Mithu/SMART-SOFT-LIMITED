@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Soft Limited — Integrated ICT, Infrastructure & System Implementation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ==============================
+   DESIGN TOKENS
+   ============================== */
+:root {
+  --navy-950: #030712;
+  --navy-900: #070f1e;
+  --navy-800: #0b1629;
+  --navy-700: #0f1f3a;
+  --navy-600: #152847;
+  --navy-500: #1d3660;
+  --blue-500: #1a56db;
+  --blue-400: #3b82f6;
+  --blue-300: #60a5fa;
+  --gold-500: #c8963e;
+  --gold-400: #d4a853;
+  --gold-300: #e2c07a;
+  --gold-200: #f0d9a8;
+  --gold-glow: rgba(200,150,62,0.15);
+  --text-primary: #f0f4ff;
+  --text-secondary: #9ab0cc;
+  --text-muted: #5a7a99;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-gold: rgba(200,150,62,0.3);
+  --border-blue: rgba(59,130,246,0.25);
+  --glass-bg: rgba(11,22,41,0.7);
+  --glass-hover: rgba(15,31,58,0.9);
+  --card-border: rgba(255,255,255,0.07);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Barlow', sans-serif;
+  --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ==============================
+   RESET & BASE
+   ============================== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--navy-950);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==============================
+   SCROLLBAR
+   ============================== */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--navy-950); }
+::-webkit-scrollbar-thumb { background: var(--gold-500); border-radius: 2px; }
+
+/* ==============================
+   CANVAS BG
+   ============================== */
+#canvas-bg {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; opacity: 0.4;
+}
+
+/* ==============================
+   NAVIGATION
+   ============================== */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  padding: 0 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 72px;
+  background: rgba(3,7,18,0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 14px;
+}
+.nav-emblem {
+  width: 36px; height: 36px;
+  border: 1px solid var(--gold-500);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-condensed); font-size: 13px; font-weight: 700;
+  color: var(--gold-400); letter-spacing: 1px;
+  position: relative;
+}
+.nav-emblem::after {
+  content: ''; position: absolute; inset: 3px;
+  border: 1px solid rgba(200,150,62,0.2);
+}
+.nav-name {
+  font-family: var(--font-condensed); font-size: 17px; font-weight: 700;
+  color: var(--text-primary); letter-spacing: 3px; text-transform: uppercase;
+}
+.nav-name span { color: var(--gold-400); }
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-condensed); font-size: 12px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; text-decoration: none;
+  color: var(--text-secondary); transition: color 0.3s;
+  cursor: pointer;
+}
+.nav-links a:hover { color: var(--gold-400); }
+.nav-cta {
+  font-family: var(--font-condensed); font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--navy-950); background: var(--gold-500);
+  border: none; padding: 10px 22px; cursor: pointer; transition: all 0.3s;
+}
+.nav-cta:hover { background: var(--gold-300); transform: translateY(-1px); }
+
+/* ==============================
+   HERO
+   ============================== */
+#hero {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  overflow: hidden;
+}
+.hero-grid-overlay {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,150,62,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,150,62,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+.hero-glow-1 {
+  position: absolute; top: 15%; left: 20%;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(26,86,219,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute; bottom: 20%; right: 15%;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,150,62,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 300;
+  color: var(--gold-400); letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeInUp 1s 0.3s ease forwards;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ''; display: block; width: 40px; height: 1px; background: var(--gold-500);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 8vw, 110px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+  opacity: 0; animation: fadeInUp 1s 0.6s ease forwards;
+}
+.hero-title strong {
+  display: block; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-300) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-title .light { color: rgba(240,244,255,0.85); font-weight: 300; }
+.hero-divider {
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--gold-500), transparent);
+  margin: 32px auto;
+  opacity: 0; animation: fadeInUp 1s 0.9s ease forwards;
+}
+.hero-subtitle {
+  font-family: var(--font-condensed); font-size: clamp(14px, 2vw, 20px);
+  font-weight: 400; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-secondary); max-width: 680px; line-height: 1.6;
+  margin-bottom: 60px;
+  opacity: 0; animation: fadeInUp 1s 1.2s ease forwards;
+}
+.hero-stats {
+  display: flex; gap: 60px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 60px;
+  opacity: 0; animation: fadeInUp 1s 1.5s ease forwards;
+}
+.hero-stat {
+  text-align: center; position: relative;
+}
+.hero-stat::after {
+  content: ''; position: absolute; right: -30px; top: 50%;
+  transform: translateY(-50%); width: 1px; height: 40px;
+  background: var(--border-subtle);
+}
+.hero-stat:last-child::after { display: none; }
+.hero-stat-num {
+  font-family: var(--font-display); font-size: 44px; font-weight: 700;
+  color: var(--gold-400); display: block; line-height: 1;
+}
+.hero-stat-label {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: 2px; text-transform: uppercase; margin-top: 6px;
+}
+.hero-btns {
+  display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+  opacity: 0; animation: fadeInUp 1s 1.8s ease forwards;
+}
+.btn-gold {
+  font-family: var(--font-condensed); font-size: 12px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold-500), var(--gold-400));
+  color: var(--navy-950); border: none; padding: 16px 36px;
+  cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(200,150,62,0.35); }
+.btn-glass {
+  font-family: var(--font-condensed); font-size: 12px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border-gold); padding: 16px 36px;
+  cursor: pointer; transition: all 0.3s;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-glass:hover { border-color: var(--gold-400); color: var(--gold-300); background: var(--gold-glow); }
+
+/* ==============================
+   SCROLL INDICATOR
+   ============================== */
+.scroll-indicator {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; animation: fadeIn 1s 2.5s ease forwards;
+}
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--gold-500));
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+  50% { opacity: 1; transform: scaleY(1); }
+}
+.scroll-label {
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-muted);
+  letter-spacing: 3px; text-transform: uppercase;
+}
+
+/* ==============================
+   SECTION BASE
+   ============================== */
+.section {
+  position: relative; z-index: 10;
+  padding: 120px 80px;
+}
+.section-alt { background: rgba(7,15,30,0.5); }
+.section-header { margin-bottom: 80px; }
+.section-eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 300;
+  color: var(--gold-400); letter-spacing: 4px; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.section-eyebrow::before {
+  content: ''; display: block; width: 28px; height: 1px; background: var(--gold-500);
+}
+.section-title {
+  font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700; line-height: 1.1; color: var(--text-primary);
+}
+.section-title .accent { color: var(--gold-400); }
+.section-desc {
+  font-size: 16px; color: var(--text-secondary); max-width: 640px;
+  line-height: 1.8; margin-top: 20px;
+}
+.section-line {
+  width: 80px; height: 2px; margin-top: 24px;
+  background: linear-gradient(90deg, var(--gold-500), transparent);
+}
+
+/* ==============================
+   CAPABILITY MATRIX — FULL TABLE
+   ============================== */
+.matrix-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+}
+.matrix-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-body); font-size: 13.5px;
+}
+.matrix-table thead tr {
+  background: linear-gradient(135deg, rgba(200,150,62,0.15), rgba(26,86,219,0.1));
+  border-bottom: 1px solid var(--border-gold);
+}
+.matrix-table th {
+  font-family: var(--font-condensed); font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold-300);
+  padding: 18px 20px; text-align: left;
+  border-right: 1px solid var(--border-subtle);
+}
+.matrix-table th:last-child { border-right: none; }
+.matrix-table tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.3s;
+}
+.matrix-table tbody tr:hover { background: rgba(200,150,62,0.04); }
+.matrix-table td {
+  padding: 20px 20px; vertical-align: top;
+  border-right: 1px solid var(--border-subtle);
+  color: var(--text-secondary); line-height: 1.6;
+}
+.matrix-table td:last-child { border-right: none; }
+.matrix-table td:first-child {
+  font-family: var(--font-condensed); font-size: 13px; font-weight: 700;
+  color: var(--gold-300); letter-spacing: 0.5px; white-space: nowrap;
+}
+.matrix-table td strong { color: var(--text-primary); }
+.oem-group {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.oem-country {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: 1px; margin-top: 6px; margin-bottom: 2px;
+}
+.oem-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.oem-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15);
+  color: var(--blue-300); padding: 3px 8px; white-space: nowrap;
+}
+.bullet-list { display: flex; flex-direction: column; gap: 3px; }
+.bullet-list li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--text-secondary); list-style: none;
+}
+.bullet-list li::before { content: '▸'; color: var(--gold-500); flex-shrink: 0; margin-top: 1px; }
+.model-badge {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  color: var(--gold-300); background: rgba(200,150,62,0.08);
+  border: 1px solid var(--border-gold); padding: 4px 10px; margin: 2px 2px 2px 0;
+}
+
+/* ==============================
+   CATEGORY CARDS
+   ============================== */
+.categories-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.cat-card {
+  background: var(--glass-bg); border: 1px solid var(--card-border);
+  padding: 36px 32px; position: relative; overflow: hidden;
+  transition: all 0.4s ease; cursor: default;
+  backdrop-filter: blur(12px);
+}
+.cat-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+  transform: translateX(-100%); transition: transform 0.5s ease;
+}
+.cat-card:hover::before { transform: translateX(0); }
+.cat-card:hover {
+  border-color: var(--border-gold);
+  background: var(--glass-hover);
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 40px rgba(200,150,62,0.06);
+}
+.cat-card-num {
+  font-family: var(--font-display); font-size: 60px; font-weight: 700;
+  color: rgba(200,150,62,0.07); line-height: 1;
+  position: absolute; top: 20px; right: 24px;
+  pointer-events: none;
+}
+.cat-card-icon {
+  font-size: 28px; margin-bottom: 20px; display: block;
+}
+.cat-card-title {
+  font-family: var(--font-condensed); font-size: 16px; font-weight: 700;
+  letter-spacing: 1px; color: var(--gold-300); margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.cat-card-work {
+  font-size: 13.5px; color: var(--text-secondary); line-height: 1.7;
+  margin-bottom: 20px;
+}
+.cat-card-work strong { color: var(--text-primary); font-weight: 600; }
+.cat-card-meta {
+  padding-top: 16px; border-top: 1px solid var(--border-subtle);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.meta-row { display: flex; gap: 8px; align-items: flex-start; }
+.meta-label {
+  font-family: var(--font-mono); font-size: 9px; color: var(--text-muted);
+  letter-spacing: 2px; text-transform: uppercase;
+  white-space: nowrap; padding-top: 2px; min-width: 58px;
+}
+.meta-val {
+  font-size: 12px; color: var(--text-secondary); line-height: 1.5;
+}
+.meta-val .model-badge { font-size: 9px; padding: 3px 7px; }
+
+/* ==============================
+   EXECUTION READINESS
+   ============================== */
+.readiness-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  background: var(--border-subtle);
+  border: 1px solid var(--border-subtle);
+}
+.readiness-item {
+  background: var(--navy-900); padding: 36px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; transition: background 0.3s;
+}
+.readiness-item:hover { background: rgba(11,22,41,0.9); }
+.readiness-area {
+  font-family: var(--font-condensed); font-size: 15px; font-weight: 600;
+  color: var(--text-primary); letter-spacing: 0.5px;
+}
+.readiness-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.readiness-bar-wrap { width: 100px; height: 3px; background: rgba(255,255,255,0.08); }
+.readiness-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+  width: 0%; transition: width 1.2s ease;
+}
+.readiness-level {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 400;
+  color: var(--gold-400); letter-spacing: 2px; text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ==============================
+   OPERATIONAL STRENGTH
+   ============================== */
+.strength-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+}
+.strength-card {
+  background: var(--glass-bg); border: 1px solid var(--card-border);
+  padding: 36px 28px; position: relative; overflow: hidden;
+  transition: all 0.4s; backdrop-filter: blur(12px);
+}
+.strength-card:hover {
+  border-color: var(--border-gold);
+  box-shadow: 0 0 60px rgba(200,150,62,0.06);
+}
+.strength-icon {
+  width: 48px; height: 48px;
+  border: 1px solid var(--border-gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 24px;
+}
+.strength-title {
+  font-family: var(--font-condensed); font-size: 16px; font-weight: 700;
+  color: var(--gold-300); letter-spacing: 1px; margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.strength-desc {
+  font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+}
+.strength-num {
+  position: absolute; bottom: 20px; right: 24px;
+  font-family: var(--font-display); font-size: 80px; font-weight: 700;
+  color: rgba(200,150,62,0.04); line-height: 1; pointer-events: none;
+}
+
+/* ==============================
+   STRATEGIC POSITIONING
+   ============================== */
+#strategic {
+  background: linear-gradient(135deg, rgba(7,15,30,0.95), rgba(3,7,18,0.98));
+  position: relative; overflow: hidden;
+}
+.strategic-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(ellipse at 30% 50%, rgba(26,86,219,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 50%, rgba(200,150,62,0.06) 0%, transparent 60%);
+}
+.strategic-quote {
+  max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 2;
+}
+.quote-mark {
+  font-family: var(--font-display); font-size: 140px; font-weight: 700;
+  color: rgba(200,150,62,0.08); line-height: 0.5;
+  display: block; text-align: left; margin-bottom: 20px;
+}
+.strategic-text {
+  font-family: var(--font-display); font-size: clamp(22px, 3vw, 36px);
+  font-weight: 400; line-height: 1.6; color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+.strategic-text em {
+  color: var(--gold-400); font-style: normal; font-weight: 600;
+}
+.strategic-models {
+  display: flex; justify-content: center; gap: 20px;
+  flex-wrap: wrap; margin-top: 56px;
+}
+.strat-badge {
+  font-family: var(--font-condensed); font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid var(--border-gold); color: var(--gold-300);
+  padding: 12px 24px; transition: all 0.3s;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.strat-badge:hover { background: var(--gold-glow); }
+
+/* ==============================
+   FOOTER
+   ============================== */
+footer {
+  position: relative; z-index: 10;
+  background: var(--navy-950);
+  border-top: 1px solid var(--border-subtle);
+  padding: 48px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 24px;
+}
+.footer-brand {
+  font-family: var(--font-condensed); font-size: 20px; font-weight: 700;
+  letter-spacing: 4px; color: var(--gold-400);
+}
+.footer-brand span { color: var(--text-secondary); font-weight: 400; font-size: 12px; display: block; letter-spacing: 2px; margin-top: 4px; }
+.footer-tagline {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+  letter-spacing: 2px; text-transform: uppercase; text-align: right;
+}
+
+/* ==============================
+   SECTION DIVIDER
+   ============================== */
+.divider {
+  position: relative; z-index: 10;
+  height: 1px; background: var(--border-subtle);
+  margin: 0 80px;
+}
+.divider::after {
+  content: '◆'; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--gold-500); font-size: 10px;
+  background: var(--navy-950); padding: 0 16px;
+}
+
+/* ==============================
+   SCROLL REVEAL
+   ============================== */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ==============================
+   KEYFRAMES
+   ============================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+@media (max-width: 1100px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .strength-grid { grid-template-columns: repeat(2, 1fr); }
+  .readiness-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .section { padding: 80px 32px; }
+  .divider { margin: 0 32px; }
+  footer { padding: 40px 32px; }
+}
+@media (max-width: 680px) {
+  .categories-grid { grid-template-columns: 1fr; }
+  .strength-grid { grid-template-columns: 1fr; }
+  .readiness-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 32px; }
+  .hero-stat::after { display: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas-bg"></canvas>
+
+<!-- ==============================
+     NAVIGATION
+     ============================== -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-emblem">SS</div>
+    <div class="nav-name">Smart<span>Soft</span> <span style="color:var(--text-muted);font-size:10px;font-weight:400;letter-spacing:2px">LIMITED</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="document.getElementById('capability-matrix').scrollIntoView({behavior:'smooth'})">Matrix</a></li>
+    <li><a onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">Capabilities</a></li>
+    <li><a onclick="document.getElementById('readiness').scrollIntoView({behavior:'smooth'})">Readiness</a></li>
+    <li><a onclick="document.getElementById('strength').scrollIntoView({behavior:'smooth'})">Strength</a></li>
+    <li><a onclick="document.getElementById('strategic').scrollIntoView({behavior:'smooth'})">Positioning</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('strategic').scrollIntoView({behavior:'smooth'})">View Positioning</button>
+</nav>
+
+<!-- ==============================
+     HERO
+     ============================== -->
+<section id="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-eyebrow">Capability Presentation 2025</div>
+
+  <h1 class="hero-title">
+    <span class="light">Smart Soft</span>
+    <strong>Limited</strong>
+  </h1>
+
+  <div class="hero-divider"></div>
+
+  <p class="hero-subtitle">
+    Integrated ICT, Infrastructure &amp; System Implementation Capability Matrix
+  </p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-num">15</span>
+      <span class="hero-stat-label">Capability Areas</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">9</span>
+      <span class="hero-stat-label">OEM Ecosystems</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">High</span>
+      <span class="hero-stat-label">All Readiness Levels</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-num">3</span>
+      <span class="hero-stat-label">Execution Models</span>
+    </div>
+  </div>
+
+  <div class="hero-btns">
+    <button class="btn-gold" onclick="document.getElementById('capability-matrix').scrollIntoView({behavior:'smooth'})">Explore Capability Matrix</button>
+    <button class="btn-glass" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})">View All Categories</button>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ==============================
+     CAPABILITY MATRIX TABLE
+     ============================== -->
+<div class="divider reveal"></div>
+
+<section class="section section-alt" id="capability-matrix">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Full Capability Overview</div>
+    <h2 class="section-title">Integrated ICT, Infrastructure &amp;<br><span class="accent">System Implementation Capability Matrix</span></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="matrix-wrap reveal">
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Work Capability</th>
+          <th>OEM / Technology Ecosystem Experience</th>
+          <th>Vendor / Execution Model</th>
+          <th>Team Capability</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Software Development &amp; Digital Platforms</td>
+          <td>ERP, HRM, CRM, MIS, Web Applications, Mobile Apps, SaaS Platforms, Dashboard Systems, API Integration</td>
+          <td>Open-source, Cloud-based, Enterprise Architecture, Payment APIs</td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Full Software Lifecycle Development &amp; Maintenance</td>
+        </tr>
+        <tr>
+          <td>Government &amp; Enterprise System Integration</td>
+          <td>Central Monitoring Systems, Institutional Automation, Multi-system Integration</td>
+          <td>Multi-vendor compatible architecture</td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Integration-focused engineering capability</td>
+        </tr>
+        <tr>
+          <td>Payment &amp; Identity Systems</td>
+          <td>Payment Gateway Integration, Identity Verification, Access Systems</td>
+          <td>Banking APIs, MFS APIs, Biometric Ecosystem</td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Secure transaction &amp; authentication integration</td>
+        </tr>
+        <tr>
+          <td>Computer-Laptop &amp; IT Infrastructure</td>
+          <td>Desktop, Laptop, Workstation, Server Deployment, Computer Labs</td>
+          <td>
+            <div class="oem-group">
+              <div class="oem-country">China</div>
+              <div class="oem-tags"><span class="oem-tag">Lenovo</span><span class="oem-tag">Huawei</span></div>
+              <div class="oem-country">USA</div>
+              <div class="oem-tags"><span class="oem-tag">Dell</span><span class="oem-tag">HP</span><span class="oem-tag">Lenovo</span></div>
+              <div class="oem-country">Taiwan</div>
+              <div class="oem-tags"><span class="oem-tag">ASUS</span><span class="oem-tag">Acer</span><span class="oem-tag">MSI</span><span class="oem-tag">Gigabyte</span></div>
+            </div>
+          </td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Multi-site deployment &amp; configuration</td>
+        </tr>
+        <tr>
+          <td>Server &amp; Data Systems</td>
+          <td>Server Setup, Storage, Backup Systems, Virtualization Support</td>
+          <td>
+            <div class="oem-group">
+              <div class="oem-country">China</div>
+              <div class="oem-tags"><span class="oem-tag">Huawei</span><span class="oem-tag">ZTE</span><span class="oem-tag">Lenovo</span></div>
+              <div class="oem-country">USA</div>
+              <div class="oem-tags"><span class="oem-tag">Cisco</span><span class="oem-tag">Oracle</span><span class="oem-tag">HPE</span></div>
+              <div class="oem-country">Taiwan</div>
+              <div class="oem-tags"><span class="oem-tag">ASUS</span><span class="oem-tag">Acer</span><span class="oem-tag">Gigabyte</span></div>
+            </div>
+          </td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Infrastructure deployment capability</td>
+        </tr>
+        <tr>
+          <td>Networking &amp; Connectivity</td>
+          <td>LAN/WAN, Fiber Optic, Structured Cabling, Enterprise Wi-Fi</td>
+          <td>
+            <div class="oem-group">
+              <div class="oem-country">China</div>
+              <div class="oem-tags"><span class="oem-tag">Huawei</span><span class="oem-tag">ZTE</span><span class="oem-tag">Lenovo</span></div>
+              <div class="oem-country">USA</div>
+              <div class="oem-tags"><span class="oem-tag">Cisco</span><span class="oem-tag">Oracle</span><span class="oem-tag">HPE</span></div>
+              <div class="oem-country">Taiwan</div>
+              <div class="oem-tags"><span class="oem-tag">ASUS</span><span class="oem-tag">Acer</span><span class="oem-tag">Gigabyte</span></div>
+            </div>
+          </td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Enterprise network deployment capability</td>
+        </tr>
+        <tr>
+          <td>Security &amp; Surveillance Systems</td>
+          <td>CCTV, IP Surveillance, AI Monitoring, Command Centers</td>
+          <td>
+            <div class="oem-tags" style="flex-wrap:wrap;gap:4px">
+              <span class="oem-tag">Hikvision</span><span class="oem-tag">Dahua Technology</span><span class="oem-tag">Uniview</span><span class="oem-tag">Tiandy</span><span class="oem-tag">ZKTeco</span><span class="oem-tag">TP-Link</span><span class="oem-tag">EZVIZ</span><span class="oem-tag">IMOU</span><span class="oem-tag">Honeywell</span><span class="oem-tag">Bosch Security Systems</span>
+            </div>
+          </td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Centralized surveillance implementation</td>
+        </tr>
+        <tr>
+          <td>Access Control &amp; Smart Security</td>
+          <td>Biometric, RFID, Face Recognition, Visitor Management</td>
+          <td>
+            <div class="oem-group">
+              <div class="oem-country">China</div>
+              <div class="oem-tags"><span class="oem-tag">ZKTeco</span><span class="oem-tag">Hikvision</span><span class="oem-tag">Dahua</span></div>
+              <div class="oem-country">USA</div>
+              <div class="oem-tags"><span class="oem-tag">Honeywell</span><span class="oem-tag">Bosch</span></div>
+              <div class="oem-country">Taiwan</div>
+              <div class="oem-tags"><span class="oem-tag">ASUS</span><span class="oem-tag">Acer</span><span class="oem-tag">Gigabyte</span></div>
+            </div>
+          </td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Security system integration capability</td>
+        </tr>
+        <tr>
+          <td>Smart Classroom &amp; Multimedia-IFP</td>
+          <td>IFP, Multimedia Classroom, AV Systems, Hybrid Learning</td>
+          <td>
+            <div class="oem-group">
+              <div class="oem-country">China</div>
+              <div class="oem-tags"><span class="oem-tag">Hikvision</span><span class="oem-tag">Dahua</span><span class="oem-tag">MAXHUB</span><span class="oem-tag">Huawei</span></div>
+              <div class="oem-country">USA / Canada</div>
+              <div class="oem-tags"><span class="oem-tag">SMART (Canada)</span><span class="oem-tag">Boxlight</span></div>
+              <div class="oem-country">Taiwan</div>
+              <div class="oem-tags"><span class="oem-tag">ViewSonic</span><span class="oem-tag">BenQ</span></div>
+            </div>
+          </td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Smart classroom implementation capability</td>
+        </tr>
+        <tr>
+          <td>Automation &amp; IoT Systems</td>
+          <td>Smart Office, IoT Monitoring, Workflow Automation, Building Monitoring</td>
+          <td>Mixed OEM &amp; automation ecosystem</td>
+          <td><span class="model-badge">Integration &amp; Customization</span><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Process automation implementation</td>
+        </tr>
+        <tr>
+          <td>Office Technology &amp; Accessories</td>
+          <td>Conference Setup, Printers, Scanners, UPS, Smart Office Equipment</td>
+          <td>Multi-brand ecosystem support</td>
+          <td><span class="model-badge">Vendor Collaboration</span><span class="model-badge">Project-based Sourcing</span></td>
+          <td>Complete office deployment support</td>
+        </tr>
+        <tr>
+          <td>Training &amp; Capacity Building</td>
+          <td>User Training, Admin Training, Technical Workshops</td>
+          <td>Software + Hardware operational ecosystem</td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>On-site &amp; remote training capability</td>
+        </tr>
+        <tr>
+          <td>Maintenance &amp; Support Services</td>
+          <td>AMC, Remote Support, Troubleshooting, Upgrade Services</td>
+          <td>Multi-brand maintenance experience</td>
+          <td><span class="model-badge">Direct Development</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></td>
+          <td>Long-term operational support</td>
+        </tr>
+        <tr>
+          <td>Large Scale Project Execution</td>
+          <td>National / Multi-site ICT Deployment</td>
+          <td>Multi-OEM integration ecosystem</td>
+          <td><span class="model-badge">JV</span><span class="model-badge">Consortium</span><span class="model-badge">Technical Partner</span></td>
+          <td>Large deployment coordination capability</td>
+        </tr>
+        <tr>
+          <td>Joint Venture &amp; Consortium Capability</td>
+          <td>Mega ICT Projects, National Infrastructure Systems</td>
+          <td>Local &amp; International ecosystem collaboration</td>
+          <td><span class="model-badge">JV</span><span class="model-badge">Consortium</span><span class="model-badge">Sub-contract</span></td>
+          <td>Cross-organizational execution readiness</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==============================
+     CATEGORY CARDS
+     ============================== -->
+<div class="divider reveal"></div>
+
+<section class="section" id="categories">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Detailed Breakdown</div>
+    <h2 class="section-title">Category-wise <span class="accent">Capability Sections</span></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="categories-grid">
+    <!-- 01 -->
+    <div class="cat-card reveal">
+      <div class="cat-card-num">01</div>
+      <span class="cat-card-icon">💻</span>
+      <div class="cat-card-title">Software Development &amp; Digital Platforms</div>
+      <div class="cat-card-work">ERP, HRM, CRM, MIS, Web Applications, Mobile Apps, SaaS Platforms, Dashboard Systems, API Integration</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Open-source, Cloud-based, Enterprise Architecture, Payment APIs</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Full Software Lifecycle Development &amp; Maintenance</span></div>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="cat-card reveal reveal-delay-1">
+      <div class="cat-card-num">02</div>
+      <span class="cat-card-icon">🏛️</span>
+      <div class="cat-card-title">Government &amp; Enterprise System Integration</div>
+      <div class="cat-card-work">Central Monitoring Systems, Institutional Automation, Multi-system Integration</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Multi-vendor compatible architecture</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Integration-focused engineering capability</span></div>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="cat-card reveal reveal-delay-2">
+      <div class="cat-card-num">03</div>
+      <span class="cat-card-icon">💳</span>
+      <div class="cat-card-title">Payment &amp; Identity Systems</div>
+      <div class="cat-card-work">Payment Gateway Integration, Identity Verification, Access Systems</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Banking APIs, MFS APIs, Biometric Ecosystem</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Secure transaction &amp; authentication integration</span></div>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="cat-card reveal">
+      <div class="cat-card-num">04</div>
+      <span class="cat-card-icon">🖥️</span>
+      <div class="cat-card-title">Computer-Laptop &amp; IT Infrastructure</div>
+      <div class="cat-card-work">Desktop, Laptop, Workstation, Server Deployment, Computer Labs</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM — CN</span><span class="meta-val">Lenovo, Huawei</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — US</span><span class="meta-val">Dell, HP, Lenovo</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — TW</span><span class="meta-val">ASUS, Acer, MSI, Gigabyte</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Multi-site deployment &amp; configuration</span></div>
+      </div>
+    </div>
+
+    <!-- 05 -->
+    <div class="cat-card reveal reveal-delay-1">
+      <div class="cat-card-num">05</div>
+      <span class="cat-card-icon">🗄️</span>
+      <div class="cat-card-title">Server &amp; Data Systems</div>
+      <div class="cat-card-work">Server Setup, Storage, Backup Systems, Virtualization Support</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM — CN</span><span class="meta-val">Huawei, ZTE, Lenovo</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — US</span><span class="meta-val">Cisco, Oracle, HPE</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — TW</span><span class="meta-val">ASUS, Acer, Gigabyte</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Infrastructure deployment capability</span></div>
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="cat-card reveal reveal-delay-2">
+      <div class="cat-card-num">06</div>
+      <span class="cat-card-icon">🌐</span>
+      <div class="cat-card-title">Networking &amp; Connectivity</div>
+      <div class="cat-card-work">LAN/WAN, Fiber Optic, Structured Cabling, Enterprise Wi-Fi</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM — CN</span><span class="meta-val">Huawei, ZTE, Lenovo</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — US</span><span class="meta-val">Cisco, Oracle, HPE</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — TW</span><span class="meta-val">ASUS, Acer, Gigabyte</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Enterprise network deployment capability</span></div>
+      </div>
+    </div>
+
+    <!-- 07 -->
+    <div class="cat-card reveal">
+      <div class="cat-card-num">07</div>
+      <span class="cat-card-icon">📹</span>
+      <div class="cat-card-title">Security &amp; Surveillance Systems</div>
+      <div class="cat-card-work">CCTV, IP Surveillance, AI Monitoring, Command Centers</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM</span><span class="meta-val">Hikvision · Dahua Technology · Uniview · Tiandy · ZKTeco · TP-Link · EZVIZ · IMOU · Honeywell · Bosch Security Systems</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Centralized surveillance implementation</span></div>
+      </div>
+    </div>
+
+    <!-- 08 -->
+    <div class="cat-card reveal reveal-delay-1">
+      <div class="cat-card-num">08</div>
+      <span class="cat-card-icon">🔐</span>
+      <div class="cat-card-title">Access Control &amp; Smart Security</div>
+      <div class="cat-card-work">Biometric, RFID, Face Recognition, Visitor Management</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM — CN</span><span class="meta-val">ZKTeco, Hikvision, Dahua</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — US</span><span class="meta-val">Honeywell, Bosch</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — TW</span><span class="meta-val">ASUS, Acer, Gigabyte</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Security system integration capability</span></div>
+      </div>
+    </div>
+
+    <!-- 09 -->
+    <div class="cat-card reveal reveal-delay-2">
+      <div class="cat-card-num">09</div>
+      <span class="cat-card-icon">🎓</span>
+      <div class="cat-card-title">Smart Classroom &amp; Multimedia-IFP</div>
+      <div class="cat-card-work">IFP, Multimedia Classroom, AV Systems, Hybrid Learning</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">OEM — CN</span><span class="meta-val">Hikvision, Dahua, MAXHUB, Huawei</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — US</span><span class="meta-val">SMART (Canada), Boxlight</span></div>
+        <div class="meta-row"><span class="meta-label">OEM — TW</span><span class="meta-val">ViewSonic, BenQ</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Smart classroom implementation capability</span></div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="cat-card reveal">
+      <div class="cat-card-num">10</div>
+      <span class="cat-card-icon">⚙️</span>
+      <div class="cat-card-title">Automation &amp; IoT Systems</div>
+      <div class="cat-card-work">Smart Office, IoT Monitoring, Workflow Automation, Building Monitoring</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Mixed OEM &amp; automation ecosystem</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Integration &amp; Customization</span><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Process automation implementation</span></div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="cat-card reveal reveal-delay-1">
+      <div class="cat-card-num">11</div>
+      <span class="cat-card-icon">🖨️</span>
+      <div class="cat-card-title">Office Technology &amp; Accessories</div>
+      <div class="cat-card-work">Conference Setup, Printers, Scanners, UPS, Smart Office Equipment</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Multi-brand ecosystem support</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Vendor Collab</span><span class="model-badge">Project Sourcing</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Complete office deployment support</span></div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="cat-card reveal reveal-delay-2">
+      <div class="cat-card-num">12</div>
+      <span class="cat-card-icon">🎯</span>
+      <div class="cat-card-title">Training &amp; Capacity Building</div>
+      <div class="cat-card-work">User Training, Admin Training, Technical Workshops</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Software + Hardware operational ecosystem</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">On-site &amp; remote training capability</span></div>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="cat-card reveal">
+      <div class="cat-card-num">13</div>
+      <span class="cat-card-icon">🔧</span>
+      <div class="cat-card-title">Maintenance &amp; Support Services</div>
+      <div class="cat-card-work">AMC, Remote Support, Troubleshooting, Upgrade Services</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Multi-brand maintenance experience</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">Direct Dev</span><span class="model-badge">JV</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Long-term operational support</span></div>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="cat-card reveal reveal-delay-1">
+      <div class="cat-card-num">14</div>
+      <span class="cat-card-icon">🚀</span>
+      <div class="cat-card-title">Large Scale Project Execution</div>
+      <div class="cat-card-work">National / Multi-site ICT Deployment</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Multi-OEM integration ecosystem</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">JV</span><span class="model-badge">Consortium</span><span class="model-badge">Technical Partner</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Large deployment coordination capability</span></div>
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="cat-card reveal reveal-delay-2">
+      <div class="cat-card-num">15</div>
+      <span class="cat-card-icon">🤝</span>
+      <div class="cat-card-title">Joint Venture &amp; Consortium Capability</div>
+      <div class="cat-card-work">Mega ICT Projects, National Infrastructure Systems</div>
+      <div class="cat-card-meta">
+        <div class="meta-row"><span class="meta-label">Ecosystem</span><span class="meta-val">Local &amp; International ecosystem collaboration</span></div>
+        <div class="meta-row"><span class="meta-label">Model</span><span class="meta-val"><span class="model-badge">JV</span><span class="model-badge">Consortium</span><span class="model-badge">Sub-contract</span></span></div>
+        <div class="meta-row"><span class="meta-label">Team</span><span class="meta-val">Cross-organizational execution readiness</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     EXECUTION READINESS
+     ============================== -->
+<div class="divider reveal"></div>
+
+<section class="section section-alt" id="readiness">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Performance Summary</div>
+    <h2 class="section-title">Execution <span class="accent">Readiness Summary</span></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="readiness-grid reveal">
+    <div class="readiness-item">
+      <div class="readiness-area">Software Development</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">System Integration</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">Multi-Vendor Coordination</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">ICT Infrastructure Deployment</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">Smart Security Systems</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">Smart Classroom Deployment</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">Large-Scale Rollout Capability</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">Training &amp; Support</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+    <div class="readiness-item">
+      <div class="readiness-area">JV / Consortium Readiness</div>
+      <div class="readiness-right">
+        <div class="readiness-bar-wrap"><div class="readiness-bar" data-w="100"></div></div>
+        <span class="readiness-level">High</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     OPERATIONAL STRENGTH
+     ============================== -->
+<div class="divider reveal"></div>
+
+<section class="section" id="strength">
+  <div class="section-header reveal">
+    <div class="section-eyebrow">Core Differentiators</div>
+    <h2 class="section-title">Operational <span class="accent">Strength</span></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="strength-grid">
+    <div class="strength-card reveal">
+      <div class="strength-num">01</div>
+      <div class="strength-icon">🌍</div>
+      <div class="strength-title">Multi-brand Ecosystem Experience</div>
+      <div class="strength-desc">Multi-brand ecosystem experience across global OEM vendors and technology partners.</div>
+    </div>
+    <div class="strength-card reveal reveal-delay-1">
+      <div class="strength-num">02</div>
+      <div class="strength-icon">📋</div>
+      <div class="strength-title">Large Project Coordination Capability</div>
+      <div class="strength-desc">Large project coordination capability for complex, multi-stakeholder implementations.</div>
+    </div>
+    <div class="strength-card reveal reveal-delay-2">
+      <div class="strength-num">03</div>
+      <div class="strength-icon">📈</div>
+      <div class="strength-title">Scalable Deployment Structure</div>
+      <div class="strength-desc">Scalable deployment structure capable of expanding from single-site to national-level rollouts.</div>
+    </div>
+    <div class="strength-card reveal">
+      <div class="strength-num">04</div>
+      <div class="strength-icon">🤝</div>
+      <div class="strength-title">Flexible Vendor Collaboration Model</div>
+      <div class="strength-desc">Flexible vendor collaboration model enabling project-specific sourcing and partnerships.</div>
+    </div>
+    <div class="strength-card reveal reveal-delay-1">
+      <div class="strength-num">05</div>
+      <div class="strength-icon">⚡</div>
+      <div class="strength-title">End-to-end Implementation Readiness</div>
+      <div class="strength-desc">End-to-end implementation readiness from consultation and design through deployment and handover.</div>
+    </div>
+    <div class="strength-card reveal reveal-delay-2">
+      <div class="strength-num">06</div>
+      <div class="strength-icon">🔄</div>
+      <div class="strength-title">Long-term Support &amp; Maintenance Capability</div>
+      <div class="strength-desc">Long-term support &amp; maintenance capability ensuring sustained operational performance post-deployment.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     STRATEGIC POSITIONING
+     ============================== -->
+<div class="divider reveal"></div>
+
+<section class="section" id="strategic">
+  <div class="strategic-bg"></div>
+  <div class="section-header reveal" style="text-align:center">
+    <div class="section-eyebrow" style="justify-content:center">Executive Summary</div>
+    <h2 class="section-title" style="text-align:center">Strategic <span class="accent">Positioning</span></h2>
+    <div class="section-line" style="margin:24px auto 0"></div>
+  </div>
+
+  <div class="strategic-quote reveal">
+    <span class="quote-mark">"</span>
+    <p class="strategic-text">
+      Smart Soft Limited works as an <em>implementation-focused ICT &amp; infrastructure integration team</em> capable of delivering complex <em>digital, networking, surveillance, automation, and smart infrastructure projects</em> through <em>direct execution, vendor collaboration, or joint venture models.</em>
+    </p>
+    <div class="strategic-models">
+      <div class="strat-badge">Direct Execution</div>
+      <div class="strat-badge">Vendor Collaboration</div>
+      <div class="strat-badge">Joint Venture Models</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     FOOTER
+     ============================== -->
+<footer>
+  <div class="footer-brand">
+    Smart Soft Limited
+    <span>Integrated ICT · Infrastructure · System Implementation</span>
+  </div>
+  <div class="footer-tagline">
+    Capability Matrix — 2025<br>
+    All Rights Reserved
+  </div>
+</footer>
+
+<script>
+/* === CANVAS BACKGROUND === */
+const canvas = document.getElementById('canvas-bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class P {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r = Math.random() * 1.2 + 0.3;
+    this.a = Math.random() * 0.5 + 0.2;
+    this.gold = Math.random() > 0.7;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = this.gold
+      ? `rgba(200,150,62,${this.a * 0.6})`
+      : `rgba(59,130,246,${this.a * 0.4})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 90; i++) particles.push(new P());
+
+function drawLines() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 130) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(200,150,62,${(1 - d / 130) * 0.06})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawLines();
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* === SCROLL REVEAL === */
+const reveals = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.08 });
+reveals.forEach(el => revealObs.observe(el));
+
+/* === READINESS BARS === */
+const bars = document.querySelectorAll('.readiness-bar');
+const barObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const w = e.target.getAttribute('data-w');
+      setTimeout(() => { e.target.style.width = w + '%'; }, 200);
+      barObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.2 });
+bars.forEach(b => barObs.observe(b));
+</script>
+</body>
+</html>
